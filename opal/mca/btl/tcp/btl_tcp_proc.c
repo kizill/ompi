@@ -902,6 +902,8 @@ void mca_btl_tcp_proc_accept(mca_btl_tcp_proc_t* btl_proc, struct sockaddr* addr
                                     inet_ntop(AF_INET6, (void*)(struct in6_addr*)&btl_endpoint->endpoint_addr->addr_union.addr_inet,
                                               tmp[1], INET6_ADDRSTRLEN),
                                     (int)i, (int)btl_proc->proc_endpoint_count);
+                found_match = 1;
+                match_btl_endpoint = btl_endpoint;
                 continue;
             } else if (btl_endpoint->endpoint_state != MCA_BTL_TCP_CLOSED) {
                  found_match = 1;
@@ -986,8 +988,8 @@ bool mca_btl_tcp_proc_tosocks(mca_btl_tcp_addr_t* proc_addr,
         {
             struct sockaddr_in6* inaddr = (struct sockaddr_in6*)output;
             output->ss_family = AF_INET6;
-            memcpy(&inaddr->sin6_addr, &proc_addr->addr_union.addr_inet,
-                   sizeof (proc_addr->addr_union.addr_inet));
+            memcpy(&inaddr->sin6_addr, &proc_addr->addr_union.addr_inet6,
+                   sizeof (proc_addr->addr_union.addr_inet6));
             inaddr->sin6_port = proc_addr->addr_port;
             inaddr->sin6_scope_id = 0;
             inaddr->sin6_flowinfo = 0;

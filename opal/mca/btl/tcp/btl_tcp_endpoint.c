@@ -397,19 +397,19 @@ mca_btl_tcp_endpoint_send_blocking(mca_btl_base_endpoint_t* btl_endpoint,
  * Send the globally unique identifier for this process to a endpoint on
  * a newly connected socket.
  */
-static int 
+static int
 mca_btl_tcp_endpoint_send_connect_ack(mca_btl_base_endpoint_t* btl_endpoint)
 {
     opal_process_name_t guid = opal_proc_local_get()->proc_name;
     OPAL_PROCESS_NAME_HTON(guid);
-    
+
     mca_btl_tcp_endpoint_hs_msg_t hs_msg;
     opal_string_copy(hs_msg.magic_id, mca_btl_tcp_magic_id_string,
                      sizeof(hs_msg.magic_id));
     hs_msg.guid = guid;
-    
-    if(sizeof(hs_msg) != 
-       mca_btl_tcp_endpoint_send_blocking(btl_endpoint, 
+
+    if(sizeof(hs_msg) !=
+       mca_btl_tcp_endpoint_send_blocking(btl_endpoint,
                                           &hs_msg, sizeof(hs_msg))) {
          opal_show_help("help-mpi-btl-tcp.txt", "client handshake fail",
                        true, opal_process_info.nodename,
@@ -608,7 +608,7 @@ static int mca_btl_tcp_endpoint_recv_connect_ack(mca_btl_base_endpoint_t* btl_en
         opal_show_help("help-mpi-btl-tcp.txt", "client handshake fail",
                        true, opal_process_info.nodename,
                        getpid(), "did not receive entire connect ACK from peer");
-        
+
         return OPAL_ERR_BAD_PARAM;
     }
     if (0 != strncmp(hs_msg.magic_id, mca_btl_tcp_magic_id_string, len)) {
@@ -723,11 +723,11 @@ static int mca_btl_tcp_endpoint_start_connect(mca_btl_base_endpoint_t* btl_endpo
     mca_btl_tcp_proc_tosocks(btl_endpoint->endpoint_addr, &endpoint_addr);
 
     /* Bind the socket to one of the addresses associated with
-     * this btl module.  This sets the source IP to one of the 
-     * addresses shared in modex, so that the destination rank 
-     * can properly pair btl modules, even in cases where Linux 
+     * this btl module.  This sets the source IP to one of the
+     * addresses shared in modex, so that the destination rank
+     * can properly pair btl modules, even in cases where Linux
      * might do something unexpected with routing */
-    if (endpoint_addr.ss_family == AF_INET) {
+    /*if (endpoint_addr.ss_family == AF_INET) {
         assert(NULL != &btl_endpoint->endpoint_btl->tcp_ifaddr);
         if (bind(btl_endpoint->endpoint_sd, (struct sockaddr*) &btl_endpoint->endpoint_btl->tcp_ifaddr,
                  sizeof(struct sockaddr_in)) < 0) {
@@ -755,6 +755,7 @@ static int mca_btl_tcp_endpoint_start_connect(mca_btl_base_endpoint_t* btl_endpo
         }
     }
 #endif
+*/
     opal_output_verbose(10, opal_btl_base_framework.framework_output,
                         "btl: tcp: attempting to connect() to %s address %s on port %d",
                         OPAL_NAME_PRINT(btl_endpoint->endpoint_proc->proc_opal->proc_name),
